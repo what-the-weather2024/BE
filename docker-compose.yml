@@ -1,0 +1,12 @@
+version: '3'
+services:
+  database:
+    container_name: what_the_weather
+    image: mysql
+    environment:
+      MYSQL_DATABASE: what_the_weather_db
+      MYSQL_ROOT_HOST: root
+      MYSQL_ROOT_PASSWORD: 1234
+      TZ: 'Asia/Seoul'
+    ports:
+      - '3306:3306'
