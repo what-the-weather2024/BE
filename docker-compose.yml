@@ -1,12 +1,18 @@
 version: '3'
 services:
-  database:
-    container_name: what_the_weather
-    image: mysql
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
     environment:
-      MYSQL_DATABASE: what_the_weather_db
-      MYSQL_ROOT_HOST: root
-      MYSQL_ROOT_PASSWORD: 1234
-      TZ: 'Asia/Seoul'
+      - 'MYSQL_DATABASE=what_the_weather_db'
+      - 'MYSQL_ROOT_PASSWORD=wtw2024'
+      - 'MYSQL_USER=wtw'
+      - 'MYSQL_PASSWORD=wtw2024'
+      - 'TZ=Asia/Seoul'
     ports:
-      - '3306:3306'
+      - '33306:3306'
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - '6379:6379'
