@@ -1,0 +1,11 @@
+### 우산 대여소 헬스 체크
+GET localhost:8080/api/umbrella/health
+
+### 우산 대여소 전체 조회
+GET localhost:8080/api/umbrella
+
+### 우산 대여소 조건부 조회 (서울)
+GET localhost:8080/api/umbrella/nearby?latitude=37.571076&longitude=126.976849&radius=5
+
+### 우산 대여소 조건부 조회 (부산)
+GET localhost:8080/api/umbrella/nearby?latitude=35.158698&longitude=129.160384&radius=10
