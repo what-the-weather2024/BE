@@ -9,3 +9,6 @@ GET localhost:8080/api/umbrella/nearby?latitude=37.571076&longitude=126.976849&r
 
 ### 우산 대여소 조건부 조회 (부산)
 GET localhost:8080/api/umbrella/nearby?latitude=35.158698&longitude=129.160384&radius=10
+
+### 우산 대여소 조건부 조회 (양수 아닌경우)
+GET localhost:8080/api/umbrella/nearby?latitude=35.158698&longitude=129.160384&radius=0
