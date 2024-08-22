@@ -60,7 +60,7 @@ jobs:
     # 7. 기존 컨테이너 중지 및 삭제
     - name: Stop and remove existing container
       run: |
-        if [ "$(docker ps -q -f name=${{ env.CONTAINER_NAME }})" ]; then
+        if [ "$(sudo docker ps -q -f name=${{ env.CONTAINER_NAME }})" ]; then
           sudo docker stop ${{ env.CONTAINER_NAME }}
           sudo docker rm ${{ env.CONTAINER_NAME }}
         fi
