@@ -10,7 +10,7 @@ env:
   IMAGE_NAME: wtw-spring
 
 jobs:
-  build-docker-image:
+  build-docker-image-and-push:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
