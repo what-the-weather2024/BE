@@ -43,8 +43,8 @@ jobs:
 
     # 5. Docker 이미지 빌드
     - name: Build Docker image
-      run: docker build -t chancehee/${{ env.IMAGE_NAME }}:${{ github.sha }} .
+      run: docker build -t chancehee/${{ env.IMAGE_NAME }}:latest .
 
     # 6. DockerHub 이미지 푸시
     - name: Push Docker image to DockerHub
-      run: docker push chancehee/${{ env.IMAGE_NAME }}:${{ github.sha }}
+      run: docker push chancehee/${{ env.IMAGE_NAME }}:latest
