@@ -52,25 +52,26 @@ jobs:
 
   pull-and-docker-deploy:
     runs-on: self-hosted
+    needs: build-docker-image-and-push
     steps:
     - name: Pull Docker image from DockerHub
-      run: docker pull chancehee/${{ env.IMAGE_NAME }}:latest
+      run: sudo docker pull chancehee/${{ env.IMAGE_NAME }}:latest
 
     # 7. 기존 컨테이너 중지 및 삭제
     - name: Stop and remove existing container
       run: |
         if [ "$(docker ps -q -f name=${{ env.CONTAINER_NAME }})" ]; then
-          docker stop ${{ env.CONTAINER_NAME }}
-          docker rm ${{ env.CONTAINER_NAME }}
+          sudo docker stop ${{ env.CONTAINER_NAME }}
+          sudo docker rm ${{ env.CONTAINER_NAME }}
         fi
 
     # 8. 새로운 컨테이너 실행
     - name: Run new Docker container
       run: |
-        docker run -d --name ${{ env.CONTAINER_NAME }} --network my-network -p 8080:8080 chancehee/${{ env.IMAGE_NAME }}:latest
+        sudo docker run -d --name ${{ env.CONTAINER_NAME }} --network my-network -p 8080:8080 chancehee/${{ env.IMAGE_NAME }}:latest
 
     # 9. 오래된 도커 이미지 제거
     - name: Remove old Docker images
       run: |
-        docker image prune -f --filter "until=24h"
+        sudo docker image prune -f --filter "until=24h"
     
