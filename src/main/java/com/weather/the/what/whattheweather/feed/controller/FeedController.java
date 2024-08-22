@@ -27,7 +27,7 @@ public class FeedController {
   @GetMapping("/health")
   public String healthController() {
     log.info("feed ok");
-    return "ok!";
+    return "feed ok";
   }
 
   /*
