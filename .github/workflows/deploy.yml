@@ -73,5 +73,5 @@ jobs:
     # 9. 오래된 도커 이미지 제거
     - name: Remove old Docker images
       run: |
-        sudo docker image prune -f --filter "until=24h"
+        sudo docker image prune -f --filter "until=1h"
     
