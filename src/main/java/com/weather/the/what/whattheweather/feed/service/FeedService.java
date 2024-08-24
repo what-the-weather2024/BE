@@ -30,16 +30,27 @@ public class FeedService {
   private final FeedRepository feedRepository;
 
   /*
-   * 피드 목록 50개 조회
+   * 피드 목록 조회
    *
    * 비회원 : 최근 생성된 이미지 목록
-   * 회원 : 검색 조건(시/구/동)에 따른 이미지 목록
-   * TODO: 페이지네이션
+   * 회원 : 검색 조건(시/구)에 따른 이미지 목록
    */
-  public List<FeedResponse> findFeeds() {
-    List<Feed> feedList = feedRepository.findAll().stream()
-        .sorted(Comparator.comparing(Feed::getCreatedAt).reversed())
-        .toList();
+  public List<FeedResponse> findFeeds(String city, String district, int size) {
+    List<Feed> feedList = null;
+
+    if (!city.isEmpty() && district.isEmpty()){ // 시
+      feedList = feedRepository.findAllByCityContainsIgnoreCase(city).stream()
+          .sorted(Comparator.comparing(Feed::getCreatedAt).reversed())
+          .toList();
+    } else if (!city.isEmpty()) {
+      feedList = feedRepository.findAllByCityContainsIgnoreCaseAndDistrictContainingIgnoreCase(city, district).stream()
+          .sorted(Comparator.comparing(Feed::getCreatedAt).reversed())
+          .toList();
+    } else {
+      feedList = feedRepository.findAll().stream()
+          .sorted(Comparator.comparing(Feed::getCreatedAt).reversed())
+          .toList();
+    }
 
     List<FeedResponse> feedResponseList = new ArrayList<>();
     feedList.forEach(feed -> {
