@@ -14,17 +14,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class FeedService {
 
+  private static final String IMAGE_ANALYSIS_URL = "http://43.202.46.159:8000/wtw-ai/image_classification";
   private final S3Service s3Service;
   private final WebClientService webClientService;
   private final FeedRepository feedRepository;
@@ -52,41 +52,8 @@ public class FeedService {
           .toList();
     }
 
-    List<FeedResponse> feedResponseList = new ArrayList<>();
-    feedList.forEach(feed -> {
-      FeedResponse feedResponse = new FeedResponse();
-      feedResponse.setId(feed.getId());
-      feedResponse.setAddress(feed.getAddress());
-      feedResponse.setFeedImageUrl(feed.getFeedImageUrl());
-      feedResponse.setWeatherStatus(feed.getWeatherStatus());
-      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-      feedResponse.setCreatedAt(feed.getCreatedAt().format(formatter));
-      feedResponse.setMemberId(feed.getMemberId());
-
-      feedResponseList.add(feedResponse);
-    });
-
-    return feedResponseList;
+    return feedList.stream().map(feed -> FeedResponse.of(feed, 90)).collect(Collectors.toList());
   }
-
-  // TODO 제거
-//  private List<FeedResponse> makeMockFeedList() {
-//    List<FeedResponse> list = new ArrayList<>();
-//
-//    for (int i=1; i<=50; i++) {
-//      FeedResponse feed = new FeedResponse();
-//      feed.setId((long) i);
-//      feed.setAddress("서울시 용산구 한남동");
-//      feed.setWeatherStatus("맑음");
-//      feed.setFeedImageUrl("https://d3ocx8ysnxlhd5.cloudfront.net/052211e0-a6de-49d0-b939-a135a4e42fcf::WTW-FILE");
-//      feed.setMemberId("member::" + i);
-//      feed.setCreatedAt(LocalDateTime.now());
-//
-//      list.add(feed);
-//    }
-//
-//    return list;
-//  }
 
   /**
    * 피드 업로드
@@ -108,7 +75,7 @@ public class FeedService {
     }
 
     // AI 서버에 이미지 URL 전달
-    String url = "http://43.202.46.159:8000/wtw-ai/image_classification" + "?image_url=" + imageUrl;
+    String url = IMAGE_ANALYSIS_URL + "?image_url=" + imageUrl;
     ImageAnalysisResult result = null;
     try {
       result = webClientService.postDataToServer(url, Collections.emptyList(), ImageAnalysisResult.class);
@@ -140,16 +107,6 @@ public class FeedService {
     feedRepository.save(feed);
 
     // 분석 결과 응답
-    FeedResponse feedResponse = new FeedResponse();
-    feedResponse.setId(feed.getId());
-    feedResponse.setAddress(feed.getAddress());
-    feedResponse.setWeatherStatus(result.getWeather());
-    feedResponse.setWeatherProb((result.getProb() * 100) + "%");
-    feedResponse.setFeedImageUrl(imageUrl);
-
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    feedResponse.setCreatedAt(feed.getCreatedAt().format(formatter));
-
-    return feedResponse;
+    return FeedResponse.of(feed, result.getProb());
   }
 }
