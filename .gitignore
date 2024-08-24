@@ -37,8 +37,8 @@ out/
 .vscode/
 
 ### application.properties ###
-*/resources/*.yml
-*/resources/*.properties
+src/main/resources/*.yml
+src/main/resources/*.properties
 
 ### docker-compose.yml ###
-*/docker-compose.yml
+/docker-compose.yml
