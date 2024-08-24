@@ -25,11 +25,10 @@ public class Feed {
   private String feedImageUrl; //피드이미지
   @Column(name = "created_at")
   private LocalDateTime createdAt; //생성일자
-  // TODO 회원테이블 관계 매핑
   @Column(name = "member_id")
   private String memberId;
 
   public String getAddress() {
-    return (city == null ? "" : city) + (district == null ? "" : district);
+    return (city == null ? "" : city) + " " + (district == null ? "" : district);
   }
 }
