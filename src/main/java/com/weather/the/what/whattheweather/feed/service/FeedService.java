@@ -3,6 +3,8 @@ package com.weather.the.what.whattheweather.feed.service;
 import com.weather.the.what.whattheweather.feed.dto.request.FeedUploadRequest;
 import com.weather.the.what.whattheweather.feed.dto.response.FeedResponse;
 import com.weather.the.what.whattheweather.feed.dto.external.ImageAnalysisResult;
+import com.weather.the.what.whattheweather.feed.entity.Feed;
+import com.weather.the.what.whattheweather.feed.repository.FeedRepository;
 import com.weather.the.what.whattheweather.global.http.WebClientService;
 import com.weather.the.what.whattheweather.s3.service.S3Service;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ public class FeedService {
 
   private final S3Service s3Service;
   private final WebClientService webClientService;
+  private final FeedRepository feedRepository;
 
   /*
    * 피드 목록 50개 조회
@@ -41,7 +44,7 @@ public class FeedService {
 
     for (int i=1; i<=50; i++) {
       FeedResponse feed = new FeedResponse();
-      feed.setId("mock::" + i);
+      feed.setId((long) i);
       feed.setCity("서울시");
       feed.setDistrict("용산구");
       feed.setNeighborhood("한남동");
@@ -66,7 +69,7 @@ public class FeedService {
    * - 분석 결과 응답
    */
   @Transactional
-  public ImageAnalysisResult uploadFeed(FeedUploadRequest request) {
+  public FeedResponse uploadFeed(FeedUploadRequest request) {
     // S3 파일 업로드
     String imageUrl;
     try {
@@ -80,9 +83,26 @@ public class FeedService {
     ImageAnalysisResult result = webClientService.postDataToServer(url, Collections.emptyList(), ImageAnalysisResult.class);
     log.info("AI result : {}", result);
 
-    // TODO: 분석 결과 DB 저장
+    // 분석 결과 DB 저장
+    Feed feed = new Feed();
+    feed.setCity(request.getCity());
+    feed.setDistrict(request.getDistrict());
+    feed.setNeighborhood(request.getNeighborhood());
+    feed.setWeatherStatus(result.getWeather());
+    feed.setFeedImageUrl(imageUrl);
+    feed.setCreatedAt(LocalDateTime.now());
+    feedRepository.save(feed);
 
     // 분석 결과 응답
-    return result;
+    FeedResponse feedResponse = new FeedResponse();
+    feedResponse.setId(feed.getId());
+    feedResponse.setCity(request.getCity());
+    feedResponse.setDistrict(request.getDistrict());
+    feedResponse.setNeighborhood(request.getNeighborhood());
+    feedResponse.setWeatherStatus(result.getWeather());
+    feedResponse.setFeedImageUrl(imageUrl);
+    feedResponse.setCreatedAt(feed.getCreatedAt());
+
+    return feedResponse;
   }
 }
