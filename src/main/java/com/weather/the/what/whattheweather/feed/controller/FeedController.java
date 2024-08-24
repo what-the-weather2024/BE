@@ -30,8 +30,12 @@ public class FeedController {
    * 피드 목록 조회
   */
   @GetMapping
-  public ResponseEntity<List<FeedResponse>> getFeeds(@RequestParam(required = false, defaultValue = "50") String size) {
-    return ResponseEntity.ok(feedService.findFeeds());
+  public ResponseEntity<List<FeedResponse>> getFeeds(
+      @RequestParam(required = false, defaultValue = "50") int size,
+      @RequestParam(required = false, defaultValue = "") String city,
+      @RequestParam(required = false, defaultValue = "") String district
+  ) {
+    return ResponseEntity.ok(feedService.findFeeds(city, district, size));
   }
 
   /*
