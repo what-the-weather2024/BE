@@ -19,8 +19,6 @@ public class Feed {
   private String city; //시
   @Column(name = "district")
   private String district; //구
-  @Column(name = "neighborhood")
-  private String neighborhood; //동
   @Column(name = "weather_status")
   private String weatherStatus; //날씨
   @Column(name = "feed_image_url")
@@ -30,4 +28,8 @@ public class Feed {
   // TODO 회원테이블 관계 매핑
   @Column(name = "member_id")
   private String memberId;
+
+  public String getAddress() {
+    return (city == null ? "" : city) + (district == null ? "" : district);
+  }
 }

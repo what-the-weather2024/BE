@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.time.Duration;
+
 @Service
 @RequiredArgsConstructor
 public class WebClientService {
@@ -21,6 +23,7 @@ public class WebClientService {
         .bodyValue(requestBody)
         .retrieve()
         .bodyToMono(responseType)
+        .timeout(Duration.ofSeconds(20))
         .block(); // 비동기 결과를 동기적으로 대기
   }
 }

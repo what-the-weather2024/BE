@@ -35,7 +35,22 @@ public class FeedService {
    * TODO: 페이지네이션
    */
   public List<FeedResponse> findFeeds() {
-    return makeMockFeedList();
+    List<Feed> feedList = feedRepository.findAll();
+
+    List<FeedResponse> feedResponseList = new ArrayList<>();
+    feedList.forEach(feed -> {
+      FeedResponse feedResponse = new FeedResponse();
+      feedResponse.setId(feed.getId());
+      feedResponse.setAddress(feed.getAddress());
+      feedResponse.setFeedImageUrl(feed.getFeedImageUrl());
+      feedResponse.setWeatherStatus(feed.getWeatherStatus());
+      feedResponse.setCreatedAt(feed.getCreatedAt());
+      feedResponse.setMemberId(feed.getMemberId());
+
+      feedResponseList.add(feedResponse);
+    });
+
+    return feedResponseList;
   }
 
   // TODO 제거
@@ -45,9 +60,7 @@ public class FeedService {
     for (int i=1; i<=50; i++) {
       FeedResponse feed = new FeedResponse();
       feed.setId((long) i);
-      feed.setCity("서울시");
-      feed.setDistrict("용산구");
-      feed.setNeighborhood("한남동");
+      feed.setAddress("서울시 용산구 한남동");
       feed.setWeatherStatus("맑음");
       feed.setFeedImageUrl("https://d3ocx8ysnxlhd5.cloudfront.net/052211e0-a6de-49d0-b939-a135a4e42fcf::WTW-FILE");
       feed.setMemberId("member::" + i);
@@ -80,14 +93,18 @@ public class FeedService {
 
     // AI 서버에 이미지 URL 전달
     String url = "http://43.202.46.159:8000/wtw-ai/image_classification" + "?image_url=" + imageUrl;
-    ImageAnalysisResult result = webClientService.postDataToServer(url, Collections.emptyList(), ImageAnalysisResult.class);
-    log.info("AI result : {}", result);
+    ImageAnalysisResult result = null;
+    try {
+      result = webClientService.postDataToServer(url, Collections.emptyList(), ImageAnalysisResult.class);
+      log.info("AI result : {}", result);
+    } catch (Exception e) {
+      log.error(e.getMessage());
+    }
 
     // 분석 결과 DB 저장
     Feed feed = new Feed();
     feed.setCity(request.getCity());
     feed.setDistrict(request.getDistrict());
-    feed.setNeighborhood(request.getNeighborhood());
     feed.setWeatherStatus(result.getWeather());
     feed.setFeedImageUrl(imageUrl);
     feed.setCreatedAt(LocalDateTime.now());
@@ -96,9 +113,7 @@ public class FeedService {
     // 분석 결과 응답
     FeedResponse feedResponse = new FeedResponse();
     feedResponse.setId(feed.getId());
-    feedResponse.setCity(request.getCity());
-    feedResponse.setDistrict(request.getDistrict());
-    feedResponse.setNeighborhood(request.getNeighborhood());
+    feedResponse.setAddress(feed.getAddress());
     feedResponse.setWeatherStatus(result.getWeather());
     feedResponse.setFeedImageUrl(imageUrl);
     feedResponse.setCreatedAt(feed.getCreatedAt());
