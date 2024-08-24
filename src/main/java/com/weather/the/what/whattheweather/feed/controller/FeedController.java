@@ -2,16 +2,12 @@ package com.weather.the.what.whattheweather.feed.controller;
 
 import com.weather.the.what.whattheweather.feed.dto.request.FeedUploadRequest;
 import com.weather.the.what.whattheweather.feed.dto.response.FeedResponse;
-import com.weather.the.what.whattheweather.feed.dto.external.ImageAnalysisResult;
 import com.weather.the.what.whattheweather.feed.service.FeedService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -34,7 +30,7 @@ public class FeedController {
    * 피드 목록 조회
   */
   @GetMapping
-  public ResponseEntity<List<FeedResponse>> getFeeds() {
+  public ResponseEntity<List<FeedResponse>> getFeeds(@RequestParam(required = false, defaultValue = "50") String size) {
     return ResponseEntity.ok(feedService.findFeeds());
   }
 
@@ -47,8 +43,8 @@ public class FeedController {
   @PostMapping
   public ResponseEntity<?> uploadFeed(FeedUploadRequest request) {
     log.info("[Feed Upload Request] : {}", request);
-    ImageAnalysisResult imageAnalysisResult = feedService.uploadFeed(request);
-    return ResponseEntity.ok(imageAnalysisResult);
+    FeedResponse feedResponse = feedService.uploadFeed(request);
+    return ResponseEntity.ok(feedResponse);
   }
 
 }

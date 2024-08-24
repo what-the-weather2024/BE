@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class FeedResponse {
-  private String id; //피드아이디
+  private Long id; //피드아이디
   private String city; //시
   private String district; //구
   private String neighborhood; //동
