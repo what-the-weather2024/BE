@@ -13,6 +13,8 @@ public class ImageAnalysisResult {
   private String statusCode;
   @JsonProperty(value = "weather")
   private String weather;
+  @JsonProperty(value = "prob")
+  private Double prob;
   @JsonProperty(value = "error")
   private String error;
 }
