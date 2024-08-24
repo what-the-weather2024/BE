@@ -52,7 +52,7 @@ public class FeedService {
           .toList();
     }
 
-    return feedList.stream().map(feed -> FeedResponse.of(feed, 0.09)).collect(Collectors.toList());
+    return feedList.stream().map(feed -> FeedResponse.of(feed, 0.9)).collect(Collectors.toList());
   }
 
   /**
