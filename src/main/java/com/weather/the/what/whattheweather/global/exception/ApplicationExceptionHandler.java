@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 @Slf4j
 @RestControllerAdvice
@@ -19,7 +20,18 @@ public class ApplicationExceptionHandler {
         log.info("{}: {}", exception.getClass().getSimpleName(), exception.getMessage(), exception);
         return ResponseEntity
                 .status(exception.getStatus())
-                .body(ErrorResponse.from(request, exception));
+                .body(ErrorResponse.of(request, exception));
+    }
+
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    protected ResponseEntity<ErrorResponse> handleException(
+            HttpServletRequest request,
+            HandlerMethodValidationException exception
+    ) {
+        log.info("{}: {}", exception.getClass().getSimpleName(), exception.getMessage(), exception);
+        return ResponseEntity
+                .badRequest()
+                .body(ErrorResponse.of(request, exception));
     }
 
     @ExceptionHandler(Exception.class)

@@ -5,6 +5,17 @@ server:
 spring:
   application:
     name: what-the-weather
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 145061650034-d6hn4ltl0ejhdlj0okucurakjoolmo07.apps.googleusercontent.com
+            client-secret: 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
+            redirect-uri: http://localhost:8080/api/login/oauth2/code/google
+            scope:
+              - email
+              - profile
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/what_the_weather_db?serverTimezone=UTC&characterEncoding=utf8
@@ -19,3 +30,10 @@ spring:
         show_sql: true
         format_sql: true
         use_sql_comments: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+jwt:
+  secretKey: 2zOl19lvwaC7b2z6saiwEyps4uA8u6F1BeEC5m9s4HEDjhw
